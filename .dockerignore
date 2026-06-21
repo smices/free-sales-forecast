@@ -1,0 +1,19 @@
+# SPDX-FileCopyrightText: 2026 Free Sales Forecast contributors
+# SPDX-License-Identifier: MIT
+.DS_Store
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.venv/
+node_modules/
+**/node_modules/
+frontend/dist/
+**/dist/
+**/__pycache__/
+storage/uploads/*
+storage/outputs/*
+storage/models/*
+!storage/uploads/.gitkeep
+!storage/outputs/.gitkeep
+!storage/models/.gitkeep

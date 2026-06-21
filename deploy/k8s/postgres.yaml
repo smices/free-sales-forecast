@@ -1,0 +1,53 @@
+# SPDX-FileCopyrightText: 2026 Free Sales Forecast contributors
+# SPDX-License-Identifier: MIT
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: free-sales-forecast-postgres
+spec:
+  serviceName: free-sales-forecast-postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app: free-sales-forecast-postgres
+  template:
+    metadata:
+      labels:
+        app: free-sales-forecast-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          env:
+            - name: POSTGRES_DB
+              value: forecast
+            - name: POSTGRES_USER
+              value: forecast
+            - name: POSTGRES_PASSWORD
+              value: forecast
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 20Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: free-sales-forecast-postgres
+spec:
+  selector:
+    app: free-sales-forecast-postgres
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: 5432

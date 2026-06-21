@@ -1,0 +1,25 @@
+# SPDX-FileCopyrightText: 2026 Free Sales Forecast contributors
+# SPDX-License-Identifier: MIT
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: free-sales-forecast-config
+data:
+  APP_ENV: production
+  BACKEND_URL: http://free-sales-forecast-backend:8000
+  FRONTEND_API_BASE_URL: ""
+  FRONTEND_DEFAULT_LOCALE: auto
+  FRONTEND_AVATAR_SEED: open-forecast
+  FRONTEND_APP_DISPLAY_NAME: Free Sales Forecast
+  FRONTEND_JOB_POLL_TIMEOUT_MS: "120000"
+  FRONTEND_JOB_POLL_INTERVAL_MS: "1000"
+  CORS_ORIGINS: https://forecast.example.com
+  TASK_ALWAYS_EAGER: "false"
+  REDIS_URL: redis://free-sales-forecast-redis:6379/0
+  S3_ENDPOINT: http://free-sales-forecast-minio:9000
+  S3_BUCKET: free-sales-forecast
+  STORAGE_ROOT: /app/storage
+  CONFIG_SOURCE: env
+  ETCD_ENDPOINT: ""
+  ETCD_PREFIX: /free-sales-forecast
+  ETCD_TIMEOUT_SECONDS: "3"

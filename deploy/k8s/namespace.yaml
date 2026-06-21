@@ -1,0 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Free Sales Forecast contributors
+# SPDX-License-Identifier: MIT
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: free-sales-forecast

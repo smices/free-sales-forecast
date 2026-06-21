@@ -1,0 +1,34 @@
+# SPDX-FileCopyrightText: 2026 Free Sales Forecast contributors
+# SPDX-License-Identifier: MIT
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: free-sales-forecast
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "100m"
+spec:
+  rules:
+    - host: forecast.example.com
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: free-sales-forecast-backend
+                port:
+                  number: 8000
+          - path: /healthz
+            pathType: Exact
+            backend:
+              service:
+                name: free-sales-forecast-backend
+                port:
+                  number: 8000
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: free-sales-forecast-frontend
+                port:
+                  number: 8080

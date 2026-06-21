@@ -1,0 +1,32 @@
+# SPDX-FileCopyrightText: 2026 Free Sales Forecast contributors
+# SPDX-License-Identifier: MIT
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: free-sales-forecast-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: free-sales-forecast-worker
+  template:
+    metadata:
+      labels:
+        app: free-sales-forecast-worker
+    spec:
+      containers:
+        - name: worker
+          image: ghcr.io/your-org/free-sales-forecast-backend:latest
+          imagePullPolicy: IfNotPresent
+          command:
+            - dramatiq
+            - worker_app.tasks
+            - --processes
+            - "1"
+            - --threads
+            - "4"
+          envFrom:
+            - configMapRef:
+                name: free-sales-forecast-config
+            - secretRef:
+                name: free-sales-forecast-secret

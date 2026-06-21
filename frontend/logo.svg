@@ -1,0 +1,42 @@
+<!--
+SPDX-FileCopyrightText: 2026 Free Sales Forecast contributors
+SPDX-License-Identifier: MIT
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Free Sales Forecast logo">
+  <style>
+    :root {
+      --logo-bg-a: #0f2a44;
+      --logo-bg-b: #2563eb;
+      --logo-ring: #dbeafe;
+      --logo-ink: #ffffff;
+      --logo-muted: rgba(255, 255, 255, 0.68);
+      --logo-signal: #fbbf24;
+      --logo-future: #22c55e;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --logo-bg-a: #172554;
+        --logo-bg-b: #38bdf8;
+        --logo-ring: #0f172a;
+        --logo-ink: #f8fafc;
+        --logo-muted: rgba(248, 250, 252, 0.6);
+        --logo-signal: #facc15;
+        --logo-future: #34d399;
+      }
+    }
+  </style>
+  <defs>
+    <linearGradient id="logoBg" x1="16" y1="12" x2="80" y2="86" gradientUnits="userSpaceOnUse">
+      <stop stop-color="var(--logo-bg-a)" />
+      <stop offset="1" stop-color="var(--logo-bg-b)" />
+    </linearGradient>
+  </defs>
+  <circle cx="48" cy="48" r="45" fill="url(#logoBg)" />
+  <circle cx="48" cy="48" r="41" fill="none" stroke="var(--logo-ring)" stroke-opacity="0.78" stroke-width="3" />
+  <path d="M26 59c8-14 16-18 25-13 7 4 11 1 18-12" fill="none" stroke="var(--logo-muted)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M53 46c6 4 10 2 16-12" fill="none" stroke="var(--logo-future)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="3 7" />
+  <circle cx="27" cy="59" r="4" fill="var(--logo-signal)" />
+  <circle cx="51" cy="46" r="4" fill="var(--logo-signal)" />
+  <circle cx="69" cy="34" r="4" fill="var(--logo-future)" />
+  <path d="M31 24h36v10H44v11h19v10H44v21H31z" fill="var(--logo-ink)" />
+</svg>

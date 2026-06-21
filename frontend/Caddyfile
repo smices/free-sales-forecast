@@ -1,0 +1,27 @@
+# SPDX-FileCopyrightText: 2026 Free Sales Forecast contributors
+# SPDX-License-Identifier: MIT
+:8080 {
+	encode zstd gzip
+
+	handle /api/* {
+		reverse_proxy {$BACKEND_URL:http://backend:8000}
+	}
+
+	handle /healthz {
+		reverse_proxy {$BACKEND_URL:http://backend:8000}
+	}
+
+	handle /docs* {
+		reverse_proxy {$BACKEND_URL:http://backend:8000}
+	}
+
+	handle /openapi.json {
+		reverse_proxy {$BACKEND_URL:http://backend:8000}
+	}
+
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+}

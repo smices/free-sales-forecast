@@ -1,0 +1,16 @@
+# SPDX-FileCopyrightText: 2026 Free Sales Forecast contributors
+# SPDX-License-Identifier: MIT
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: free-sales-forecast
+resources:
+  - namespace.yaml
+  - secret.example.yaml
+  - configmap.yaml
+  - postgres.yaml
+  - redis.yaml
+  - minio.yaml
+  - backend.yaml
+  - worker.yaml
+  - frontend.yaml
+  - ingress.yaml

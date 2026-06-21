@@ -1,0 +1,41 @@
+# SPDX-FileCopyrightText: 2026 Free Sales Forecast contributors
+# SPDX-License-Identifier: MIT
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: free-sales-forecast-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: free-sales-forecast-frontend
+  template:
+    metadata:
+      labels:
+        app: free-sales-forecast-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: ghcr.io/your-org/free-sales-forecast-frontend:latest
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: free-sales-forecast-config
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: free-sales-forecast-frontend
+spec:
+  selector:
+    app: free-sales-forecast-frontend
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080

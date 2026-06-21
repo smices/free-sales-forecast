@@ -1,0 +1,23 @@
+# SPDX-FileCopyrightText: 2026 Free Sales Forecast contributors
+# SPDX-License-Identifier: MIT
+ARG NODE_BASE_IMAGE=public.ecr.aws/docker/library/node:20-alpine
+ARG CADDY_BASE_IMAGE=public.ecr.aws/docker/library/caddy:2.8-alpine
+
+FROM ${NODE_BASE_IMAGE} AS build
+
+WORKDIR /app
+COPY frontend/package.json frontend/package-lock.json frontend/vite.config.js ./
+RUN npm ci
+COPY frontend/ ./
+RUN cp public/config.example.js public/config.js && npm run build
+
+FROM ${CADDY_BASE_IMAGE}
+
+WORKDIR /srv
+COPY frontend/Caddyfile /etc/caddy/Caddyfile
+COPY --from=build /app/dist /srv/
+COPY deploy/docker-entrypoint.frontend.sh /usr/local/bin/docker-entrypoint.frontend.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.frontend.sh
+
+ENTRYPOINT ["docker-entrypoint.frontend.sh"]
+CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]

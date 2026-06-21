@@ -1,0 +1,625 @@
+<!doctype html>
+<!--
+SPDX-FileCopyrightText: 2026 Free Sales Forecast contributors
+SPDX-License-Identifier: MIT
+-->
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Free Sales Forecast</title>
+    <link rel="icon" href="logo.svg" type="image/svg+xml" />
+    <script src="/config.js"></script>
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="sidebar">
+        <div class="sidebar-head">
+          <div class="brand">
+            <span class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 96 96" focusable="false">
+                <circle class="logo-bg" cx="48" cy="48" r="45"></circle>
+                <circle class="logo-ring" cx="48" cy="48" r="41"></circle>
+                <path class="logo-history" d="M26 59c8-14 16-18 25-13 7 4 11 1 18-12"></path>
+                <path class="logo-future" d="M53 46c6 4 10 2 16-12"></path>
+                <circle class="logo-dot logo-dot-a" cx="27" cy="59" r="4"></circle>
+                <circle class="logo-dot logo-dot-b" cx="51" cy="46" r="4"></circle>
+                <circle class="logo-dot logo-dot-c" cx="69" cy="34" r="4"></circle>
+                <path class="logo-letter" d="M31 24h36v10H44v11h19v10H44v21H31z"></path>
+              </svg>
+            </span>
+            <div>
+              <h1>Free Sales Forecast</h1>
+              <p>数据导入 · 模型回测 · 预测导出</p>
+            </div>
+          </div>
+          <button id="runBtn" class="primary-btn" type="button">运行预测</button>
+        </div>
+
+        <nav class="control-tabs" aria-label="参数分组">
+          <button class="tab-btn active" type="button" data-tab="data">数据</button>
+          <button class="tab-btn" type="button" data-tab="trend">趋势</button>
+          <button class="tab-btn" type="button" data-tab="season" data-prophet-only>季节</button>
+          <button class="tab-btn" type="button" data-tab="holiday" data-holiday-capable>节假日</button>
+          <button class="tab-btn" type="button" data-tab="output">输出</button>
+        </nav>
+
+        <section class="control-group tab-panel active" data-panel="data">
+          <div class="group-title">
+            <span>1. 数据源与预测口径</span>
+            <button id="loadSampleBtn" class="ghost-btn" type="button">载入示例</button>
+          </div>
+          <div class="data-template-box">
+            <div class="mini-heading">
+              <span>推荐数据导出模板</span>
+              <span class="help-icon" data-tip="按这个模板从 ERP、订单系统或 BI 导出数据，模型可同时识别销量、收益、客单价、区域、渠道、品类和活动影响。最少需要 date + 一个可预测指标；数据越完整，诊断和区域预测越可靠。">?</span>
+            </div>
+            <div class="template-fields">
+              <span><strong>必须</strong>date</span>
+              <span><strong>指标</strong>quantity / revenue / order_count</span>
+              <span><strong>价格</strong>unit_price / discount</span>
+              <span><strong>区域</strong>country / market</span>
+              <span><strong>维度</strong>channel / sku / category</span>
+              <span><strong>活动</strong>campaign / event_name</span>
+            </div>
+            <button id="downloadTemplateBtn" class="ghost-btn wide" type="button">下载 CSV 模板</button>
+          </div>
+          <label class="file-drop" for="csvFile">
+            <input id="csvFile" type="file" accept=".csv,text/csv" />
+            <span>选择 CSV 文件</span>
+            <small>至少包含日期列和一个可预测指标列</small>
+          </label>
+
+          <label>
+            日期列
+            <select id="dateColumn"></select>
+          </label>
+          <label>
+            预测指标列 <span class="help-icon" data-tip="选择你要预测的业务指标，可以是销量、销售额、订单数或收益。系统会做只读诊断，尽量判断当前数据更适合预测销量、收益还是客单价。">?</span>
+            <select id="valueColumn"></select>
+          </label>
+          <label>
+            主预测模型 <span class="help-icon" data-tip="主预测模型决定趋势图里的高位、推荐位、低位和主预测明细。右侧模型实验台仍会并行回测全部模型，并给出推荐模型；主模型和推荐模型可能不同。">?</span>
+            <select id="forecastModel">
+              <option value="prophet" selected>Prophet-like</option>
+              <option value="ets">ETS 指数平滑</option>
+              <option value="sarima">SARIMA-like</option>
+              <option value="featureMl">LightGBM / XGBoost-like</option>
+              <option value="neuralProphet">NeuralProphet-like 高级</option>
+              <option value="nbeats">N-BEATS-like 高级</option>
+              <option value="movingAverage">Moving Average</option>
+              <option value="seasonalNaive">Seasonal Naive</option>
+            </select>
+          </label>
+          <label>
+            维度列（可选）
+            <select id="groupColumn"></select>
+          </label>
+          <label>
+            维度值筛选
+            <select id="groupFilter"></select>
+          </label>
+        </section>
+
+        <section class="control-group tab-panel" data-panel="trend">
+          <div class="group-title">
+            <span>2. 当前主模型参数</span>
+          </div>
+
+          <div class="model-param-panel" data-model-panel="ets">
+            <div class="mini-heading">
+              <span>ETS 指数平滑</span>
+              <span class="help-icon" data-tip="ETS 用 level、trend 和 damping 预测。适合短历史、稳定增长、无复杂活动解释的数据。auto 会在一组候选参数中自动选择历史误差较小的组合。">?</span>
+            </div>
+            <div class="checks single">
+              <label><input id="etsAuto" type="checkbox" checked /> 自动优化 alpha / beta / phi</label>
+            </div>
+            <div class="compact-grid">
+              <label>
+                alpha <span class="help-icon" data-tip="水平平滑系数。越大越重视最近一期；越小越平滑。常见范围 0.2 到 0.8。">?</span>
+                <input id="etsAlpha" type="number" min="0.01" max="0.99" step="0.01" value="0.4" />
+              </label>
+              <label>
+                beta <span class="help-icon" data-tip="趋势平滑系数。越大趋势变化越灵敏；越小趋势更稳定。常见范围 0.05 到 0.35。">?</span>
+                <input id="etsBeta" type="number" min="0" max="0.99" step="0.01" value="0.1" />
+              </label>
+            </div>
+            <label>
+              phi <span class="help-icon" data-tip="趋势阻尼系数。1 表示不阻尼；小于 1 表示长期趋势逐步收敛，适合避免无限外推。">?</span>
+              <input id="etsPhi" type="number" min="0.5" max="1" step="0.01" value="0.95" />
+            </label>
+          </div>
+
+          <div class="model-param-panel" data-model-panel="movingAverage">
+            <div class="mini-heading">
+              <span>Moving Average</span>
+              <span class="help-icon" data-tip="移动平均用最近 N 期平均值作为下一期预测。它是稳健基线，适合短期平稳数据，但无法主动学习趋势和节假日冲击。">?</span>
+            </div>
+            <label>
+              窗口期数 <span class="help-icon" data-tip="计算最近多少期的平均值。窗口越小越灵敏，窗口越大越平滑。填 0 表示按数据频率自动选择。">?</span>
+              <input id="movingAverageWindow" type="number" min="0" max="365" value="0" />
+            </label>
+          </div>
+
+          <div class="model-param-panel" data-model-panel="sarima">
+            <div class="mini-heading">
+              <span>SARIMA-like</span>
+              <span class="help-icon" data-tip="浏览器版使用“季节基线 + AR 残差”的轻量近似，用来模拟 SARIMA 的周期回归能力。真正 SARIMA/SARIMAX 建议后续接 Python statsmodels。">?</span>
+            </div>
+            <div class="compact-grid">
+              <label>
+                季节回看 <span class="help-icon" data-tip="复制多少期之前的季节值作为基线。填 0 表示自动：月度优先 12，日度优先 7，周度优先 4。">?</span>
+                <input id="sarimaLag" type="number" min="0" max="365" value="0" />
+              </label>
+              <label>
+                AR 残差强度 <span class="help-icon" data-tip="残差自回归项的保留比例。越高，近期高估或低估会延续更久；越低，更接近纯季节复用。">?</span>
+                <input id="sarimaAr" type="number" min="0" max="0.95" step="0.05" value="0.45" />
+              </label>
+            </div>
+          </div>
+
+          <div class="model-param-panel" data-model-panel="featureMl">
+            <div class="mini-heading">
+              <span>LightGBM / XGBoost-like</span>
+              <span class="help-icon" data-tip="浏览器版先用可解释特征模型近似树模型思路：滞后销量、滚动均值、趋势、月份和活动特征。真实 LightGBM/XGBoost 适合后续接 Python 后端训练。">?</span>
+            </div>
+            <div class="compact-grid">
+              <label>
+                滞后周期 <span class="help-icon" data-tip="把 N 期前的销量作为机器学习特征。月度数据常用 12，日度数据常用 7。填 0 表示自动。">?</span>
+                <input id="featureLag" type="number" min="0" max="365" value="0" />
+              </label>
+              <label>
+                滚动窗口 <span class="help-icon" data-tip="计算最近 N 期均值作为稳定特征。窗口越小越灵敏，窗口越大越平滑。">?</span>
+                <input id="featureRolling" type="number" min="2" max="60" value="6" />
+              </label>
+            </div>
+            <div class="checks single">
+              <label><input id="featureEvents" type="checkbox" checked /> 使用区域节假日/活动特征 <span class="help-icon" data-tip="启用后，目标市场模板和自定义活动会作为机器学习特征参与预测，适合多区域销售数据。">?</span></label>
+            </div>
+          </div>
+
+          <div class="model-param-panel advanced-model" data-model-panel="neuralProphet">
+            <div class="mini-heading">
+              <span>NeuralProphet-like 高级实验</span>
+              <span class="help-icon" data-tip="浏览器版用“自回归 + 趋势 + 季节 + 活动特征”的可解释近似来模拟 NeuralProphet 的思路。真实 NeuralProphet 需要 Python 后端训练。">?</span>
+            </div>
+            <div class="compact-grid">
+              <label>
+                AR 回看 <span class="help-icon" data-tip="使用最近多少期历史作为自回归信号。值越大，模型越重视近期走势记忆；历史短时不要过大。">?</span>
+                <input id="neuralLag" type="number" min="1" max="60" value="6" />
+              </label>
+              <label>
+                季节强度 <span class="help-icon" data-tip="控制周期特征在预测中的权重。值越大越重视月度/年度等周期，值越小更依赖近期自回归。">?</span>
+                <input id="neuralSeasonWeight" type="number" min="0" max="2" step="0.1" value="1" />
+              </label>
+            </div>
+            <div class="checks single">
+              <label><input id="neuralEvents" type="checkbox" checked /> 使用活动特征 <span class="help-icon" data-tip="启用后，区域节假日和自定义活动会作为外部特征参与预测。">?</span></label>
+            </div>
+          </div>
+
+          <div class="model-param-panel advanced-model" data-model-panel="nbeats">
+            <div class="mini-heading">
+              <span>N-BEATS-like 高级实验</span>
+              <span class="help-icon" data-tip="浏览器版用趋势块 + 季节块的可解释近似来模拟 N-BEATS 分解思想。真实 N-BEATS 属于深度学习模型，后续更适合接 Python/PyTorch 后端。">?</span>
+            </div>
+            <div class="compact-grid">
+              <label>
+                趋势阶数 <span class="help-icon" data-tip="趋势块使用几阶多项式。1 表示线性趋势，2/3 可以表达加速或减速，但短历史更容易过拟合。">?</span>
+                <input id="nbeatsTrendDegree" type="number" min="1" max="3" value="2" />
+              </label>
+              <label>
+                季节回看 <span class="help-icon" data-tip="季节块复用多少期之前的残差周期。填 0 表示自动：月度优先 12，日度优先 7，周度优先 4。">?</span>
+                <input id="nbeatsSeasonLag" type="number" min="0" max="365" value="0" />
+              </label>
+            </div>
+          </div>
+
+          <div class="model-param-panel" data-model-panel="seasonalNaive">
+            <div class="mini-heading">
+              <span>Seasonal Naive</span>
+              <span class="help-icon" data-tip="季节朴素模型直接复用上一个周期的值。适合稳定周/月/年周期，也是判断复杂模型是否有价值的强基线。">?</span>
+            </div>
+            <label>
+              回看周期 <span class="help-icon" data-tip="未来值复制多少期之前的历史值。填 0 表示自动：月度优先 12，日度优先 7，周度优先 4。">?</span>
+              <input id="seasonalNaiveLag" type="number" min="0" max="365" value="0" />
+            </label>
+          </div>
+
+          <div class="model-param-panel" data-model-panel="prophet">
+          <div class="compact-grid">
+            <label>
+              增长模式 <span class="help-icon" data-tip="名词解释：趋势如何随时间增长。linear 表示线性趋势；flat 表示不学习长期趋势；logistic 表示有上限 cap 的 S 型增长。计算方法：linear 使用时间 t 和变化点特征；logistic 会把销售额转换为 logit((y-floor)/(cap-floor)) 后拟合。">?</span>
+              <select id="growth">
+                <option value="linear" selected>linear</option>
+                <option value="flat">flat</option>
+                <option value="logistic">logistic</option>
+              </select>
+            </label>
+
+            <label>
+              变化点范围 <span class="help-icon" data-tip="名词解释：允许模型在哪段历史里寻找趋势变化点。计算方法：changepoint_range * 历史总长度，默认 0.8 表示只在前 80% 历史中布置变化点，减少末尾过拟合。">?</span>
+              <input id="changepointRange" type="number" min="0.1" max="1" step="0.05" value="0.8" />
+            </label>
+          </div>
+
+          <label>
+            变化点数量 <span class="help-icon" data-tip="名词解释：趋势可转折的候选点数量。计算方法：模型为每个变化点添加 max(0, t - cp) 特征。数量越多越能贴合突变，但越容易把噪声当趋势。">?</span>
+            <input id="changepoints" type="range" min="0" max="25" value="5" />
+            <span id="changepointsValue" class="range-value">5</span>
+          </label>
+
+          <label>
+            趋势灵活度 <span class="help-icon" data-tip="名词解释：趋势变化的自由度。计算方法：它控制变化点特征的正则惩罚，值越大惩罚越小，趋势越灵活，更容易贴合突增突降；值越小趋势越平滑，更不容易被短期噪声带偏。新手建议从 0.05 到 0.5 做实验。">?</span> <span class="param-alias">cp_prior / changepoint_prior_scale</span>
+            <input id="changepointPriorScale" type="range" min="1" max="100" value="35" />
+            <span id="changepointPriorScaleValue" class="range-value">0.35</span>
+          </label>
+
+          <div class="compact-grid">
+            <label>
+              logistic cap <span class="help-icon" data-tip="名词解释：逻辑增长的销售上限。计算方法：logistic 模式下使用 cap 和 floor 把销售额压到 0 到 1 之间再拟合。适合容量、门店数、市场规模有上限的业务。">?</span>
+              <input id="cap" type="number" min="0" placeholder="自动" />
+            </label>
+            <label>
+              floor <span class="help-icon" data-tip="名词解释：销售额下限。计算方法：logistic 模式和最终裁剪都会参考 floor；通常销售额业务设为 0。">?</span>
+              <input id="floor" type="number" min="0" value="0" />
+            </label>
+          </div>
+
+          <div class="checks single">
+            <label><input id="clipZero" type="checkbox" checked /> 销售额不低于 0 <span class="help-icon" data-tip="名词解释：销售额的业务下限约束。计算方法：模型内部仍可用线性项拟合，但展示出的历史拟合、未来推荐位、低位和高位都会按 max(预测值, floor, 0) 裁剪，避免出现负销量。">?</span></label>
+          </div>
+          </div>
+        </section>
+
+        <section class="control-group tab-panel" data-panel="season">
+          <div class="group-title">
+            <span>3. Prophet 季节性</span>
+          </div>
+
+          <div class="compact-grid">
+            <label>
+              模式 <span class="help-icon" data-tip="名词解释：季节波动与趋势的组合方式。additive 表示 y = 趋势 + 季节；multiplicative 表示季节按比例放大，适合销售额越大、季节波动绝对值也越大的业务。">?</span>
+              <select id="seasonalityMode">
+                <option value="additive" selected>additive</option>
+                <option value="multiplicative">multiplicative</option>
+              </select>
+            </label>
+            <label>
+              季节强度 <span class="help-icon" data-tip="名词解释：季节项强度。计算方法：控制傅里叶季节特征的正则惩罚，值越大越贴合周、月、季度、年这些周期波动；值越小周期越平滑。波动稳定且历史足够长可以调大，历史短或周期不稳定应调小。">?</span> <span class="param-alias">season_prior / seasonality_prior_scale</span>
+              <input id="seasonalityPriorScale" type="number" min="0.01" max="50" step="0.1" value="10" />
+            </label>
+          </div>
+
+          <div class="season-grid">
+            <label><input id="weekly" type="checkbox" checked /> 周</label>
+            <input id="weeklyOrder" type="number" min="1" max="20" value="3" title="weekly_fourier_order" />
+            <label><input id="monthly" type="checkbox" checked /> 月</label>
+            <input id="monthlyOrder" type="number" min="1" max="20" value="3" title="monthly_fourier_order" />
+            <label><input id="quarterly" type="checkbox" /> 季度</label>
+            <input id="quarterlyOrder" type="number" min="1" max="20" value="4" title="quarterly_fourier_order" />
+            <label><input id="yearly" type="checkbox" checked /> 年</label>
+            <input id="yearlyOrder" type="number" min="1" max="30" value="5" title="yearly_fourier_order" />
+          </div>
+
+          <div class="season-guide">
+            <div class="mini-heading">
+              <span>怎么用季节性</span>
+              <span class="help-icon" data-tip="季节性用于解释稳定重复的周期，不用于解释一次性大促。先开与你数据频率匹配的周期，再逐步调高 Fourier 阶数和季节强度 season_prior。">?</span>
+            </div>
+            <div class="guide-list">
+              <span><strong>周</strong>日度、周末差异</span>
+              <span><strong>月</strong>月初/月末/平台月促</span>
+              <span><strong>季度</strong>财季、换季、备货</span>
+              <span><strong>年</strong>冷暖季、返校、圣诞</span>
+              <span><strong>prior</strong>小平滑，大灵敏</span>
+              <span><strong>模式</strong>随规模放大用乘法</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="control-group tab-panel" data-panel="holiday">
+          <div class="group-title">
+            <span>4. 区域节假日与活动</span>
+          </div>
+
+          <div class="compact-grid">
+            <label>
+              目标市场 <span class="help-icon" data-tip="名词解释：自动注入对应区域的节假日和零售活动。支持中国、美国、加拿大、墨西哥、北美组合、欧洲、英国、东南亚。计算方法：这些日期会变成节假日特征参与拟合；欧洲/东南亚是跨国零售模板，不是单一官方日历。">?</span>
+              <select id="holidayCountry">
+                <option value="none">不使用</option>
+                <option value="CN" selected>中国电商</option>
+                <option value="US">美国</option>
+                <option value="CA">加拿大</option>
+                <option value="MX">墨西哥</option>
+                <option value="NAM">北美（美加墨）</option>
+                <option value="EU">欧洲</option>
+                <option value="UK">英国</option>
+                <option value="SEA">东南亚</option>
+                <option value="GLOBAL">通用零售</option>
+              </select>
+            </label>
+            <label>
+              活动强度 <span class="help-icon" data-tip="名词解释：节假日/活动影响强度。计算方法：控制节假日特征的正则惩罚。值越大，模型越愿意把异常峰谷归因给活动；值越小，活动影响越保守。数据少、活动不稳定或区域混合时建议保守。">?</span> <span class="param-alias">holiday_prior / holidays_prior_scale</span>
+              <input id="holidayPriorScale" type="number" min="0.01" max="50" step="0.1" value="1" />
+            </label>
+          </div>
+
+          <div class="compact-grid">
+            <label>
+              lower_window <span class="help-icon" data-tip="名词解释：活动日前多少天开始影响销售。计算方法：若日期距离活动日在 lower_window 到 upper_window 之间，节假日特征取 1。预售型活动可设为 -7、-14。">?</span>
+              <input id="holidayLowerWindow" type="number" min="-30" max="0" value="-3" />
+            </label>
+            <label>
+              upper_window <span class="help-icon" data-tip="名词解释：活动日后多少天仍影响销售。计算方法：若日期距离活动日在 lower_window 到 upper_window 之间，节假日特征取 1。节后延迟履约或返场促销可适当调大。">?</span>
+              <input id="holidayUpperWindow" type="number" min="0" max="30" value="3" />
+            </label>
+          </div>
+
+          <div class="holiday-template-box">
+            <div class="mini-heading">
+              <span>内置参考节日</span>
+              <span class="help-icon" data-tip="这里列出目标市场模板已经自动加入模型的节日、促销和区域零售节点。自定义活动只需要补这里没有的内容，例如平台活动、品牌日、会员日、省州假日、当地长周末、财年节点、物流截单日。">?</span>
+            </div>
+            <div id="holidayTemplatePreview" class="holiday-tags"></div>
+          </div>
+
+          <label>
+            自定义活动日期 <span class="help-icon" data-tip="填写格式：每行或分号分隔一个活动，日期和名称用逗号分隔，例如 2026-06-18,618 加码日。计算方法：自定义活动会和内置模板合并，并受 lower_window、upper_window、活动强度 holiday_prior 控制。">?</span>
+            <textarea id="eventDates" rows="4" placeholder="2025-06-18,618&#10;2025-11-11,双11"></textarea>
+          </label>
+        </section>
+
+        <section class="control-group tab-panel" data-panel="output">
+          <div class="group-title">
+            <span>5. 输出窗口</span>
+          </div>
+
+          <div class="compact-grid">
+            <label>
+              预测期数 <span class="help-icon" data-tip="名词解释：向未来预测多少个时间步。计算方法：模型自动识别历史频率；月度数据预测 30 表示未来 30 个月，日度数据预测 30 表示未来 30 天。">?</span>
+              <input id="horizon" type="number" min="1" max="365" value="30" />
+            </label>
+            <label>
+              预测步长 <span class="help-icon" data-tip="名词解释：未来结果每一期之间隔多久。自动表示沿用历史数据频率；手动可改成按天、按周或按月输出。模型仍使用历史频率学习，步长只控制未来日期和结果展示。">?</span>
+              <select id="forecastCadenceUnit">
+                <option value="auto" selected>自动识别</option>
+                <option value="day">按天</option>
+                <option value="week">按周</option>
+                <option value="month">按月</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="compact-grid">
+            <label>
+              间隔数 <span class="help-icon" data-tip="计算方法：预测步长 = 间隔数 × 单位。例如单位选“按周”、间隔数为 2，就是每 2 周输出一期。自动识别时此值不生效。">?</span>
+              <input id="forecastStep" type="number" min="1" max="365" value="1" />
+            </label>
+            <label>
+              置信区间 <span class="help-icon" data-tip="名词解释：预测不确定性的覆盖范围。计算方法：根据历史拟合残差标准差估计上下界；90% 区间约使用 1.645 倍残差标准差。">?</span>
+              <select id="intervalWidth">
+                <option value="0.8">80%</option>
+                <option value="0.9" selected>90%</option>
+                <option value="0.95">95%</option>
+              </select>
+            </label>
+          </div>
+
+          <label>
+            uncertainty_samples <span class="help-icon" data-tip="名词解释：Prophet 中用于估计不确定性的采样数。当前浏览器版用解析残差区间，不真正采样；保留该参数用于教学和后续接入真实 Prophet。">?</span>
+            <input id="uncertaintySamples" type="number" min="0" max="5000" step="100" value="1000" />
+          </label>
+        </section>
+
+        <div class="sidebar-footer">
+          <button id="sidebarCollapseBtn" class="collapse-btn" type="button" aria-expanded="true">
+            <span id="sidebarCollapseIcon" class="collapse-icon" aria-hidden="true">‹</span>
+            <span id="sidebarCollapseLabel" class="collapse-label">折叠侧栏</span>
+          </button>
+        </div>
+      </aside>
+
+      <section class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Free Sales Forecast</p>
+            <h2>预测结果工作台</h2>
+          </div>
+          <div class="topbar-actions">
+            <div id="status" class="status" data-state="idle">
+              <span class="status-label">状态</span>
+              <span id="statusText">等待操作：上传 CSV 或载入示例，确认字段后运行预测。</span>
+            </div>
+            <div class="user-shell">
+              <button id="userMenuBtn" class="avatar-btn" type="button" aria-haspopup="menu" aria-expanded="false" title="账户与主题">
+                <img class="open-avatar-img" alt="Open Forecast OpenAvatar" />
+              </button>
+              <div id="userMenu" class="user-menu" role="menu" hidden>
+                <div class="user-menu-head">
+                  <img class="open-avatar-img" alt="" />
+                  <div>
+                    <strong>Open Forecast</strong>
+                    <span id="avatarHashLabel">OpenAvatar</span>
+                  </div>
+                </div>
+                <div class="theme-picker" aria-label="主题选择">
+                  <div id="languageSwitchMount" class="language-switch-mount"></div>
+                  <div class="theme-row" role="group" aria-label="显示模式与颜色原型">
+                    <div class="theme-group mode-group" aria-label="显示模式">
+                      <div class="segmented-control">
+                        <button type="button" data-theme-choice="light" aria-label="明亮模式" title="明亮模式">
+                          <span class="mode-icon mode-icon-light" aria-hidden="true"></span>
+                        </button>
+                        <button type="button" data-theme-choice="system" aria-label="跟随系统" title="跟随系统">
+                          <span class="mode-icon mode-icon-system" aria-hidden="true"></span>
+                        </button>
+                        <button type="button" data-theme-choice="dark" aria-label="暗色模式" title="暗色模式">
+                          <span class="mode-icon mode-icon-dark" aria-hidden="true"></span>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="theme-group palette-group" aria-label="颜色原型">
+                      <div class="palette-control" role="group" aria-label="颜色原型">
+                        <button type="button" data-palette-choice="deep" aria-label="深海主题" title="深海主题">
+                          <i style="background:#0f2a44"></i>
+                        </button>
+                        <button type="button" data-palette-choice="indigo" aria-label="墨紫主题" title="墨紫主题">
+                          <i style="background:#3730a3"></i>
+                        </button>
+                        <button type="button" data-palette-choice="graphite" aria-label="石墨主题" title="石墨主题">
+                          <i style="background:#1f2937"></i>
+                        </button>
+                        <button type="button" data-palette-choice="slate" aria-label="钢蓝主题" title="钢蓝主题">
+                          <i style="background:#0f4c81"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="user-menu-items" aria-label="账户操作">
+                  <button type="button" role="menuitem" data-menu-action="profile">个人资料</button>
+                  <button type="button" role="menuitem" data-menu-action="logout">退出登录</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <section class="workflow-strip" aria-label="使用流程">
+          <span><strong>1</strong>导入数据与选择指标</span>
+          <span><strong>2</strong>选择主模型并调参</span>
+          <span><strong>3</strong>回测比较并确认推荐模型</span>
+          <span><strong>4</strong>导出主模型或推荐模型数据</span>
+        </section>
+
+        <section class="metrics" aria-label="关键指标">
+          <article>
+            <span>有效历史点 <span class="help-icon" data-tip="名词解释：用于训练模型的有效时间点数量。计算方法：CSV 导入后，按日期列聚合预测指标列，过滤无效日期和非数字值后的记录数。">?</span></span>
+            <strong id="metricRows">0</strong>
+          </article>
+          <article>
+            <span>历史均值 <span class="help-icon" data-tip="名词解释：历史期的平均指标值，用来判断预测是否明显偏高或偏低。计算方法：sum(历史指标值) / 历史记录数。">?</span></span>
+            <strong id="metricAvg">-</strong>
+          </article>
+          <article>
+            <span>主模型推荐合计 <span class="help-icon" data-tip="名词解释：未来预测窗口内主模型推荐位合计。计算方法：sum(每一期推荐位)。推荐位是主模型中心预测，适合作为默认目标、预算和计划基线。">?</span></span>
+            <strong id="metricForecast">-</strong>
+          </article>
+          <article>
+            <span>主模型拟合 MAPE <span class="help-icon" data-tip="名词解释：主模型在全部历史点上的平均绝对百分比误差，越低代表历史拟合越贴近真实值。计算方法：mean(abs(实际值 - 拟合值) / 实际值) * 100%。注意：实际值接近 0 时 MAPE 会被放大。">?</span></span>
+            <strong id="metricMape">-</strong>
+          </article>
+        </section>
+
+        <section id="modelNotes" class="model-notes" aria-label="模型解释"></section>
+
+        <section class="model-lab" aria-label="模型实验台">
+          <div class="section-heading">
+            <div>
+              <h3>模型选择建议与回测对比 <span class="help-icon" data-tip="用同一段历史回测窗口比较多个模型。MAE 是平均绝对误差；RMSE 更惩罚大错；MAPE 是平均百分比误差；WAPE 是总体绝对误差 / 总体实际值，更适合销售规模口径。这里给出推荐模型，但不会自动替换左侧主模型。">?</span></h3>
+              <p id="modelComparisonCaption">等待回测结果</p>
+            </div>
+          </div>
+          <div id="modelComparison" class="model-comparison"></div>
+        </section>
+
+        <section class="chart-area">
+          <div class="section-heading">
+            <div>
+              <h3>主模型预测与多模型走势 <span class="help-icon" data-tip="预测区有三条业务走势：红色高位、金色推荐位、绿色低位。浅色实线是历史拟合对比，虚线是未来模型对比。鼠标移到图上可以查看日期、预测期数、三种数量和命中的节假日活动。">?</span></h3>
+              <p id="chartSubtitle">上传 CSV 或载入示例数据开始</p>
+            </div>
+            <button id="downloadBtn" class="ghost-btn" type="button" disabled>下载主模型预测 CSV</button>
+          </div>
+          <div id="chart" class="chart"></div>
+        </section>
+
+        <section class="insight-grid" aria-label="预测解读">
+          <article class="insight-panel">
+            <div class="section-heading">
+              <div>
+                <h3>主模型预测摘要 <span class="help-icon" data-tip="这里把主模型预测表里的关键数量汇总出来：总期数、均值、峰值、低点和预测跨度。你可以先看这块判断预测是否符合业务常识，再看图和明细。">?</span></h3>
+                <p id="forecastSummaryCaption">等待预测结果</p>
+              </div>
+            </div>
+            <div id="forecastSummary" class="summary-chips"></div>
+          </article>
+          <article class="insight-panel">
+            <div class="section-heading">
+              <div>
+                <h3>区域策略 <span class="help-icon" data-tip="不同市场的节假日和促销结构不同。中国电商更重 618、双11、春节；美国零售更重黑五、网一、圣诞；通用零售适合没有明确国家的数据。">?</span></h3>
+                <p>当前市场模板对预测特征的影响</p>
+              </div>
+            </div>
+            <div id="marketGuide" class="market-guide"></div>
+            <div id="holidayDatePreview" class="holiday-date-preview"></div>
+          </article>
+        </section>
+
+        <section class="audit-panel" aria-label="数据加工链路">
+          <div class="section-heading">
+            <div>
+              <h3>数据处理审计 <span class="help-icon" data-tip="这里记录模型前后的数据加工：无效行过滤、同日期聚合、业务下限裁剪、节假日窗口展开。若没有启用自动削峰填谷，会明确显示未启用。">?</span></h3>
+              <p>透明标注每一步改了什么</p>
+            </div>
+          </div>
+          <div id="processingAudit" class="audit-grid"></div>
+        </section>
+
+        <section class="lower-grid">
+          <div class="table-panel">
+            <div class="section-heading">
+              <div>
+                <h3>主模型预测明细 <span class="help-icon" data-tip="推荐位是主模型中心预测；高位是推荐位上方的预测边界；低位是推荐位下方的预测边界。计算方法：先拟合历史，再用未来日期生成特征；高/低位约等于中心预测 ± z * 残差标准差，乘法/逻辑模式会先在变换空间计算再反变换。">?</span></h3>
+                <p id="forecastTableCaption">包含完整预测期数、低位、推荐位和高位</p>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>日期</th>
+                    <th>距今</th>
+                    <th>低位</th>
+                    <th>推荐位</th>
+                    <th>高位</th>
+                    <th>命中活动</th>
+                  </tr>
+                </thead>
+                <tbody id="forecastRows"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="table-panel">
+            <div class="section-heading">
+              <div>
+                <h3>调参运行记录</h3>
+                <p>每次运行都会保留主模型参数与误差</p>
+              </div>
+              <button id="clearExperimentsBtn" class="ghost-btn" type="button">清空</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>模型</th>
+                    <th>期数</th>
+                    <th>关键参数</th>
+                    <th>MAPE</th>
+                  </tr>
+                </thead>
+                <tbody id="experimentRows"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
