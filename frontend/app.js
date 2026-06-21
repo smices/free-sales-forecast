@@ -205,125 +205,125 @@ const staticBindings = [
 ];
 
 const staticTextBindings = [
-  [".data-template-box .mini-heading > span:first-child", "推荐数据导出模板", "Recommended Data Export Template"],
-  [".data-template-box .template-fields span:nth-child(1) strong", "必须", "Required"],
-  [".data-template-box .template-fields span:nth-child(2) strong", "指标", "Metric"],
-  [".data-template-box .template-fields span:nth-child(3) strong", "价格", "Price"],
-  [".data-template-box .template-fields span:nth-child(4) strong", "区域", "Market"],
-  [".data-template-box .template-fields span:nth-child(5) strong", "维度", "Dimension"],
-  [".data-template-box .template-fields span:nth-child(6) strong", "活动", "Event"],
-  ["#downloadTemplateBtn", "下载 CSV 模板", "Download CSV Template"],
-  [".file-drop span", "选择 CSV 文件", "Choose CSV File"],
-  [".file-drop small", "至少包含日期列和一个可预测指标列", "Must include a date column and at least one forecastable metric column"],
-  ['[data-panel="data"] .group-title span', "1. 数据源与预测口径", "1. Data Source and Forecast Target"],
-  ['[data-panel="trend"] .group-title span', "2. 当前主模型参数", "2. Current Primary Model Parameters"],
-  ['[data-panel="season"] .group-title span', "3. Prophet 季节性", "3. Prophet Seasonality"],
-  ['[data-panel="holiday"] .group-title span', "4. 区域节假日与活动", "4. Regional Holidays and Events"],
-  ['[data-panel="output"] .group-title span', "5. 输出窗口", "5. Output Window"],
-  ['[data-model-panel="ets"] .mini-heading > span:first-child', "ETS 指数平滑", "ETS Exponential Smoothing"],
-  ['[data-model-panel="movingAverage"] .mini-heading > span:first-child', "Moving Average", "Moving Average"],
-  ['[data-model-panel="sarima"] .mini-heading > span:first-child', "SARIMA-like", "SARIMA-like"],
-  ['[data-model-panel="featureMl"] .mini-heading > span:first-child', "LightGBM/XGBoost-like", "LightGBM/XGBoost-like"],
-  ['[data-model-panel="neuralProphet"] .mini-heading > span:first-child', "NeuralProphet-like 高级实验", "NeuralProphet-like Advanced Experiment"],
-  ['[data-model-panel="nbeats"] .mini-heading > span:first-child', "N-BEATS-like 高级实验", "N-BEATS-like Advanced Experiment"],
-  ['[data-model-panel="seasonalNaive"] .mini-heading > span:first-child', "Seasonal Naive", "Seasonal Naive"],
-  [".season-guide .mini-heading > span:first-child", "怎么用季节性", "How to Use Seasonality"],
-  [".season-guide .guide-list span:nth-child(1) strong", "周", "Weekly"],
-  [".season-guide .guide-list span:nth-child(2) strong", "月", "Monthly"],
-  [".season-guide .guide-list span:nth-child(3) strong", "季度", "Quarterly"],
-  [".season-guide .guide-list span:nth-child(4) strong", "年", "Yearly"],
-  [".season-guide .guide-list span:nth-child(5) strong", "prior", "prior"],
-  [".season-guide .guide-list span:nth-child(6) strong", "模式", "Mode"],
-  [".season-guide .guide-list span:nth-child(1)", "周日度、周末差异", "Weekly daily and weekend differences"],
-  [".season-guide .guide-list span:nth-child(2)", "月月初/月末/平台月促", "Monthly month-start, month-end, platform campaigns"],
-  [".season-guide .guide-list span:nth-child(3)", "季度财季、换季、备货", "Quarterly fiscal cycles, season changes, stocking"],
-  [".season-guide .guide-list span:nth-child(4)", "年冷暖季、返校、圣诞", "Yearly warm/cold seasons, back-to-school, Christmas"],
-  [".season-guide .guide-list span:nth-child(5)", "prior小平滑，大灵敏", "prior smaller is smoother, larger is more sensitive"],
-  [".season-guide .guide-list span:nth-child(6)", "模式随规模放大用乘法", "Mode use multiplicative when fluctuation scales with volume"],
-  [".holiday-template-box .mini-heading > span:first-child", "内置参考节日", "Built-in Reference Holidays"],
-  [".insight-grid .insight-panel:nth-child(2) .section-heading p", "当前市场模板对预测特征的影响", "How the selected market template affects forecast features"],
-  [".audit-panel .section-heading p", "透明标注每一步改了什么", "Transparent record of every processing step"],
-  ["#forecastTableCaption", "包含完整预测期数、低位、推荐位和高位", "Includes all forecast periods, low, recommended, and high values"],
-  ["#modelComparisonCaption", "等待回测结果", "Waiting for backtest results"],
-  ["#chartSubtitle", "上传 CSV 或载入示例数据开始", "Upload a CSV or load sample data to begin"],
-  ["#forecastSummaryCaption", "等待预测结果", "Waiting for forecast results"],
+  [".data-template-box .mini-heading > span:first-child", "static.dataTemplateTitle"],
+  [".data-template-box .template-fields span:nth-child(1) strong", "static.templateRequired"],
+  [".data-template-box .template-fields span:nth-child(2) strong", "static.templateMetric"],
+  [".data-template-box .template-fields span:nth-child(3) strong", "static.templatePrice"],
+  [".data-template-box .template-fields span:nth-child(4) strong", "static.templateMarket"],
+  [".data-template-box .template-fields span:nth-child(5) strong", "static.templateDimension"],
+  [".data-template-box .template-fields span:nth-child(6) strong", "static.templateEvent"],
+  ["#downloadTemplateBtn", "static.downloadTemplate"],
+  [".file-drop span", "static.chooseCsv"],
+  [".file-drop small", "static.csvRequirement"],
+  ['[data-panel="data"] .group-title span', "static.dataPanelTitle"],
+  ['[data-panel="trend"] .group-title span', "static.trendPanelTitle"],
+  ['[data-panel="season"] .group-title span', "static.seasonPanelTitle"],
+  ['[data-panel="holiday"] .group-title span', "static.holidayPanelTitle"],
+  ['[data-panel="output"] .group-title span', "static.outputPanelTitle"],
+  ['[data-model-panel="ets"] .mini-heading > span:first-child', "static.etsTitle"],
+  ['[data-model-panel="movingAverage"] .mini-heading > span:first-child', "static.movingAverageTitle"],
+  ['[data-model-panel="sarima"] .mini-heading > span:first-child', "static.sarimaTitle"],
+  ['[data-model-panel="featureMl"] .mini-heading > span:first-child', "static.featureMlTitle"],
+  ['[data-model-panel="neuralProphet"] .mini-heading > span:first-child', "static.neuralProphetTitle"],
+  ['[data-model-panel="nbeats"] .mini-heading > span:first-child', "static.nbeatsTitle"],
+  ['[data-model-panel="seasonalNaive"] .mini-heading > span:first-child', "static.seasonalNaiveTitle"],
+  [".season-guide .mini-heading > span:first-child", "static.seasonGuideTitle"],
+  [".season-guide .guide-list span:nth-child(1) strong", "static.weekly"],
+  [".season-guide .guide-list span:nth-child(2) strong", "static.monthly"],
+  [".season-guide .guide-list span:nth-child(3) strong", "static.quarterly"],
+  [".season-guide .guide-list span:nth-child(4) strong", "static.yearly"],
+  [".season-guide .guide-list span:nth-child(5) strong", "static.prior"],
+  [".season-guide .guide-list span:nth-child(6) strong", "static.mode"],
+  [".season-guide .guide-list span:nth-child(1)", "static.weeklyGuide"],
+  [".season-guide .guide-list span:nth-child(2)", "static.monthlyGuide"],
+  [".season-guide .guide-list span:nth-child(3)", "static.quarterlyGuide"],
+  [".season-guide .guide-list span:nth-child(4)", "static.yearlyGuide"],
+  [".season-guide .guide-list span:nth-child(5)", "static.priorGuide"],
+  [".season-guide .guide-list span:nth-child(6)", "static.modeGuide"],
+  [".holiday-template-box .mini-heading > span:first-child", "static.holidayTemplateTitle"],
+  [".insight-grid .insight-panel:nth-child(2) .section-heading p", "ui.marketStrategyCaption"],
+  [".audit-panel .section-heading p", "ui.auditCaption"],
+  ["#forecastTableCaption", "static.forecastTableCaption"],
+  ["#modelComparisonCaption", "static.modelComparisonWaiting"],
+  ["#chartSubtitle", "static.chartStart"],
+  ["#forecastSummaryCaption", "static.forecastSummaryWaiting"],
 ];
 
 const controlLabelBindings = [
-  ["dateColumn", "日期列", "Date column"],
-  ["valueColumn", "预测指标列", "Forecast metric column"],
-  ["forecastModel", "主预测模型", "Primary forecast model"],
-  ["groupColumn", "维度列（可选）", "Dimension column (optional)"],
-  ["groupFilter", "维度值筛选", "Dimension value filter"],
-  ["etsAuto", "自动优化 alpha / beta / phi", "Auto-optimize alpha / beta / phi"],
-  ["etsAlpha", "alpha", "alpha"],
-  ["etsBeta", "beta", "beta"],
-  ["etsPhi", "phi", "phi"],
-  ["movingAverageWindow", "窗口期数", "Window periods"],
-  ["sarimaLag", "季节回看", "Seasonal lookback"],
-  ["sarimaAr", "AR 残差强度", "AR residual strength"],
-  ["featureLag", "滞后周期", "Lag periods"],
-  ["featureRolling", "滚动窗口", "Rolling window"],
-  ["featureEvents", "使用区域节假日/活动特征", "Use regional holiday/event features"],
-  ["neuralLag", "AR 回看", "AR lookback"],
-  ["neuralSeasonWeight", "季节强度", "Seasonality strength"],
-  ["neuralEvents", "使用活动特征", "Use event features"],
-  ["nbeatsTrendDegree", "趋势阶数", "Trend degree"],
-  ["nbeatsSeasonLag", "季节回看", "Seasonal lookback"],
-  ["seasonalNaiveLag", "回看周期", "Lookback periods"],
-  ["growth", "增长模式", "Growth mode"],
-  ["changepointRange", "变化点范围", "Changepoint range"],
-  ["changepoints", "变化点数量", "Number of changepoints"],
-  ["changepointPriorScale", "趋势灵活度", "Trend flexibility"],
-  ["cap", "logistic cap", "logistic cap"],
-  ["floor", "floor", "floor"],
-  ["clipZero", "销售额不低于 0", "Keep sales at or above 0"],
-  ["seasonalityMode", "模式", "Mode"],
-  ["seasonalityPriorScale", "季节强度", "Seasonality strength"],
-  ["weekly", "周", "Weekly"],
-  ["monthly", "月", "Monthly"],
-  ["quarterly", "季度", "Quarterly"],
-  ["yearly", "年", "Yearly"],
-  ["holidayCountry", "目标市场", "Target market"],
-  ["holidayPriorScale", "活动强度", "Event strength"],
-  ["holidayLowerWindow", "lower_window", "lower_window"],
-  ["holidayUpperWindow", "upper_window", "upper_window"],
-  ["eventDates", "自定义活动日期", "Custom event dates"],
-  ["horizon", "预测期数", "Forecast periods"],
-  ["forecastCadenceUnit", "预测步长", "Forecast cadence"],
-  ["forecastStep", "间隔数", "Step interval"],
-  ["intervalWidth", "置信区间", "Confidence interval"],
-  ["uncertaintySamples", "uncertainty_samples", "uncertainty_samples"],
+  ["dateColumn", "controls.dateColumn"],
+  ["valueColumn", "controls.valueColumn"],
+  ["forecastModel", "controls.forecastModel"],
+  ["groupColumn", "controls.groupColumn"],
+  ["groupFilter", "controls.groupFilter"],
+  ["etsAuto", "controls.etsAuto"],
+  ["etsAlpha", "controls.etsAlpha"],
+  ["etsBeta", "controls.etsBeta"],
+  ["etsPhi", "controls.etsPhi"],
+  ["movingAverageWindow", "controls.movingAverageWindow"],
+  ["sarimaLag", "controls.sarimaLag"],
+  ["sarimaAr", "controls.sarimaAr"],
+  ["featureLag", "controls.featureLag"],
+  ["featureRolling", "controls.featureRolling"],
+  ["featureEvents", "controls.featureEvents"],
+  ["neuralLag", "controls.neuralLag"],
+  ["neuralSeasonWeight", "controls.neuralSeasonWeight"],
+  ["neuralEvents", "controls.neuralEvents"],
+  ["nbeatsTrendDegree", "controls.nbeatsTrendDegree"],
+  ["nbeatsSeasonLag", "controls.nbeatsSeasonLag"],
+  ["seasonalNaiveLag", "controls.seasonalNaiveLag"],
+  ["growth", "controls.growth"],
+  ["changepointRange", "controls.changepointRange"],
+  ["changepoints", "controls.changepoints"],
+  ["changepointPriorScale", "controls.changepointPriorScale"],
+  ["cap", "controls.cap"],
+  ["floor", "controls.floor"],
+  ["clipZero", "controls.clipZero"],
+  ["seasonalityMode", "controls.seasonalityMode"],
+  ["seasonalityPriorScale", "controls.seasonalityPriorScale"],
+  ["weekly", "controls.weekly"],
+  ["monthly", "controls.monthly"],
+  ["quarterly", "controls.quarterly"],
+  ["yearly", "controls.yearly"],
+  ["holidayCountry", "controls.holidayCountry"],
+  ["holidayPriorScale", "controls.holidayPriorScale"],
+  ["holidayLowerWindow", "controls.holidayLowerWindow"],
+  ["holidayUpperWindow", "controls.holidayUpperWindow"],
+  ["eventDates", "controls.eventDates"],
+  ["horizon", "controls.horizon"],
+  ["forecastCadenceUnit", "controls.forecastCadenceUnit"],
+  ["forecastStep", "controls.forecastStep"],
+  ["intervalWidth", "controls.intervalWidth"],
+  ["uncertaintySamples", "controls.uncertaintySamples"],
 ];
 
 const selectOptionBindings = {
   forecastModel: {
-    prophet: ["Prophet-like", "Prophet-like"],
-    ets: ["ETS 指数平滑", "ETS Exponential Smoothing"],
-    sarima: ["SARIMA-like", "SARIMA-like"],
-    featureMl: ["LightGBM/XGBoost-like", "LightGBM/XGBoost-like"],
-    neuralProphet: ["NeuralProphet-like 高级", "NeuralProphet-like Advanced"],
-    nbeats: ["N-BEATS-like 高级", "N-BEATS-like Advanced"],
-    movingAverage: ["Moving Average", "Moving Average"],
-    seasonalNaive: ["Seasonal Naive", "Seasonal Naive"],
+    prophet: "options.forecastModel.prophet",
+    ets: "options.forecastModel.ets",
+    sarima: "options.forecastModel.sarima",
+    featureMl: "options.forecastModel.featureMl",
+    neuralProphet: "options.forecastModel.neuralProphet",
+    nbeats: "options.forecastModel.nbeats",
+    movingAverage: "options.forecastModel.movingAverage",
+    seasonalNaive: "options.forecastModel.seasonalNaive",
   },
   holidayCountry: {
-    none: ["不使用", "Do not use"],
-    CN: ["中国电商", "China e-commerce"],
-    US: ["美国", "United States"],
-    CA: ["加拿大", "Canada"],
-    MX: ["墨西哥", "Mexico"],
-    NAM: ["北美（美加墨）", "North America (US/CA/MX)"],
-    EU: ["欧洲", "Europe"],
-    UK: ["英国", "United Kingdom"],
-    SEA: ["东南亚", "Southeast Asia"],
-    GLOBAL: ["通用零售", "General retail"],
+    none: "options.holidayCountry.none",
+    CN: "options.holidayCountry.CN",
+    US: "options.holidayCountry.US",
+    CA: "options.holidayCountry.CA",
+    MX: "options.holidayCountry.MX",
+    NAM: "options.holidayCountry.NAM",
+    EU: "options.holidayCountry.EU",
+    UK: "options.holidayCountry.UK",
+    SEA: "options.holidayCountry.SEA",
+    GLOBAL: "options.holidayCountry.GLOBAL",
   },
   forecastCadenceUnit: {
-    auto: ["自动识别", "Auto-detect"],
-    day: ["按天", "Daily"],
-    week: ["按周", "Weekly"],
-    month: ["按月", "Monthly"],
+    auto: "options.forecastCadenceUnit.auto",
+    day: "options.forecastCadenceUnit.day",
+    week: "options.forecastCadenceUnit.week",
+    month: "options.forecastCadenceUnit.month",
   },
 };
 
@@ -395,7 +395,10 @@ function fieldSeparator() {
 }
 
 function localizedHelpTip(text) {
-  if (currentLocale() === "zh-CN") return text;
+  if (currentLocale() === "zh-CN") {
+    const reverse = Object.fromEntries(Object.entries(helpTipTranslations).map(([zh, en]) => [en, zh]));
+    return reverse[text] || text;
+  }
   return helpTipTranslations[text] || text;
 }
 
@@ -522,7 +525,7 @@ function applySelectOptionI18n() {
     if (!select) return;
     Array.from(select.options).forEach((option) => {
       const texts = options[option.value];
-      if (texts) option.textContent = localized(texts[0], texts[1]);
+      if (texts) option.textContent = t(texts);
     });
   });
 }
@@ -535,16 +538,16 @@ function applyStaticI18n() {
       console.warn("Static i18n binding failed", selector, key, error);
     }
   });
-  staticTextBindings.forEach(([selector, zh, en]) => {
+  staticTextBindings.forEach(([selector, key]) => {
     try {
-      setPlainText(selector, zh, en);
+      setTextKeepingHelp(selector, key);
     } catch (error) {
       console.warn("Plain i18n binding failed", selector, error);
     }
   });
-  controlLabelBindings.forEach(([controlId, zh, en]) => {
+  controlLabelBindings.forEach(([controlId, key]) => {
     try {
-      setControlLabel(controlId, zh, en);
+      setControlLabel(controlId, t(key), t(key));
     } catch (error) {
       console.warn("Control i18n binding failed", controlId, error);
     }
@@ -554,27 +557,39 @@ function applyStaticI18n() {
   } catch (error) {
     console.warn("Select i18n binding failed", error);
   }
+  [
+    ['.tab-btn[data-tab="data"]', "ui.data"],
+    ['.tab-btn[data-tab="trend"]', "ui.trend"],
+    ['.tab-btn[data-tab="season"]', "ui.season"],
+    ['.tab-btn[data-tab="holiday"]', "ui.holiday"],
+    ['.tab-btn[data-tab="output"]', "ui.output"],
+  ].forEach(([selector, key]) => {
+    const button = document.querySelector(selector);
+    if (!button) return;
+    button.title = t(key);
+    button.setAttribute("aria-label", t(key));
+  });
   document.documentElement.lang = currentLocale();
   els.userMenuBtn.title = t("ui.accountTheme");
   els.userMenuBtn.setAttribute("aria-label", t("ui.accountTheme"));
-  document.querySelector('[data-theme-choice="light"]')?.setAttribute("title", lt("明亮模式", "Light mode"));
-  document.querySelector('[data-theme-choice="light"]')?.setAttribute("aria-label", lt("明亮模式", "Light mode"));
-  document.querySelector('[data-theme-choice="system"]')?.setAttribute("title", lt("跟随系统", "Use system mode"));
-  document.querySelector('[data-theme-choice="system"]')?.setAttribute("aria-label", lt("跟随系统", "Use system mode"));
-  document.querySelector('[data-theme-choice="dark"]')?.setAttribute("title", lt("暗色模式", "Dark mode"));
-  document.querySelector('[data-theme-choice="dark"]')?.setAttribute("aria-label", lt("暗色模式", "Dark mode"));
+  document.querySelector('[data-theme-choice="light"]')?.setAttribute("title", t("theme.light"));
+  document.querySelector('[data-theme-choice="light"]')?.setAttribute("aria-label", t("theme.light"));
+  document.querySelector('[data-theme-choice="system"]')?.setAttribute("title", t("theme.system"));
+  document.querySelector('[data-theme-choice="system"]')?.setAttribute("aria-label", t("theme.system"));
+  document.querySelector('[data-theme-choice="dark"]')?.setAttribute("title", t("theme.dark"));
+  document.querySelector('[data-theme-choice="dark"]')?.setAttribute("aria-label", t("theme.dark"));
   [
-    ["deep", "深海主题", "Deep theme"],
-    ["indigo", "墨紫主题", "Indigo theme"],
-    ["graphite", "石墨主题", "Graphite theme"],
-    ["slate", "钢蓝主题", "Steel blue theme"],
-  ].forEach(([value, zh, en]) => {
+    ["deep", "theme.deep"],
+    ["indigo", "theme.indigo"],
+    ["graphite", "theme.graphite"],
+    ["slate", "theme.slate"],
+  ].forEach(([value, key]) => {
     const button = document.querySelector(`[data-palette-choice="${value}"]`);
-    button?.setAttribute("title", lt(zh, en));
-    button?.setAttribute("aria-label", lt(zh, en));
+    button?.setAttribute("title", t(key));
+    button?.setAttribute("aria-label", t(key));
   });
   els.cap.placeholder = t("common.auto");
-  els.eventDates.placeholder = currentLocale() === "zh-CN" ? "2025-06-18,618\n2025-11-11,双11" : "2025-06-18,618 Campaign\n2025-11-11,Singles Day";
+  els.eventDates.placeholder = t("placeholders.eventDates");
   applySidebarCollapsed();
   setStatus(state.statusMessageKey || "status.idle", state.statusState || "idle", state.statusMessageOptions || {});
 }
@@ -1623,12 +1638,12 @@ function holidayTemplateNames(country) {
 function renderHolidayTemplatePreview(country) {
   const names = holidayTemplateNames(country);
   if (!names.length) {
-    els.holidayTemplatePreview.innerHTML = `<span class="muted">${escapeHtml(lt("未启用区域模板，请在自定义活动里填写全部业务事件", "No regional template is enabled. Add all business events as custom events."))}</span>`;
+    els.holidayTemplatePreview.innerHTML = `<span class="muted">${escapeHtml(t("static.noHolidayTemplate"))}</span>`;
     return;
   }
   els.holidayTemplatePreview.innerHTML = names
     .map((name) => `<span>${escapeHtml(name)}</span>`)
-    .concat(`<span class="muted">${escapeHtml(lt("自定义只补缺失事件", "Custom events only need to fill missing events"))}</span>`)
+    .concat(`<span class="muted">${escapeHtml(t("static.customEventsOnlyFillMissing"))}</span>`)
     .join("");
 }
 
@@ -1643,7 +1658,7 @@ function renderHolidayDatePreview(result) {
   const templateNames = holidayTemplateNames(result.params.holidayCountry);
   const templateBody = templateNames.length
     ? templateNames.map((name) => `<span>${escapeHtml(name)}</span>`).join("")
-    : `<span class="muted">${escapeHtml(lt("当前没有启用区域模板", "No regional template is currently enabled"))}</span>`;
+    : `<span class="muted">${escapeHtml(t("static.noRegionalTemplateCurrent"))}</span>`;
   const seen = new Set();
   const events = result.params.events
     .filter((event) => event.date && event.date >= start && event.date <= end)
@@ -1657,8 +1672,8 @@ function renderHolidayDatePreview(result) {
 
   const body = events.length
     ? events.map((event) => `<span>${formatDate(event.date)} ${escapeHtml(localizedEventName(event.name))}</span>`).join("")
-    : `<span class="muted">${escapeHtml(lt("当前预测窗口没有命中内置或自定义活动", "No built-in or custom events match the current forecast window"))}</span>`;
-  els.holidayDatePreview.innerHTML = `<strong>${escapeHtml(lt("内置参考节日/活动", "Built-in Reference Holidays / Events"))}</strong>${templateBody}<strong>${escapeHtml(lt(`预测窗口命中日期（${events.length} 个）`, `Matched dates in forecast window (${events.length})`))}</strong>${body}`;
+    : `<span class="muted">${escapeHtml(t("static.noHolidayEventsMatched"))}</span>`;
+  els.holidayDatePreview.innerHTML = `<strong>${escapeHtml(t("static.builtInHolidayEvents"))}</strong>${templateBody}<strong>${escapeHtml(t("static.matchedForecastDates", { count: events.length }))}</strong>${body}`;
 }
 
 function renderProcessingAudit(result) {
@@ -1758,7 +1773,7 @@ function renderProcessingAudit(result) {
 function renderModelComparison(result) {
   const comparison = result.modelComparison;
   if (!comparison || !comparison.models.length) {
-    els.modelComparisonCaption.textContent = lt("历史数据太少，暂不做多模型回测", "History is too short for multi-model backtesting.");
+    els.modelComparisonCaption.textContent = t("static.historyTooShortBacktest");
     els.modelComparison.innerHTML = "";
     return;
   }
@@ -2954,15 +2969,13 @@ function drawEmpty() {
   els.chart.innerHTML = `<div class="empty-state">${escapeHtml(t("chart.empty"))}</div>`;
   els.modelNotes.innerHTML = "";
   els.processingAudit.innerHTML = "";
-  els.modelComparisonCaption.textContent = currentLocale() === "zh-CN" ? "等待回测结果" : "Waiting for backtest results";
+  els.modelComparisonCaption.textContent = t("static.modelComparisonWaiting");
   els.modelComparison.innerHTML = "";
-  els.forecastSummaryCaption.textContent = currentLocale() === "zh-CN" ? "等待预测结果" : "Waiting for forecast results";
+  els.forecastSummaryCaption.textContent = t("static.forecastSummaryWaiting");
   els.forecastSummary.innerHTML = "";
   els.marketGuide.innerHTML = "";
   els.holidayDatePreview.innerHTML = "";
-  els.forecastTableCaption.textContent = currentLocale() === "zh-CN"
-    ? "包含主模型完整预测期数、低位、推荐位和高位"
-    : "Includes all primary-model forecast periods, low, recommended, and high values";
+  els.forecastTableCaption.textContent = t("static.primaryForecastTableCaption");
 }
 
 function refreshForLocaleChange() {
@@ -3090,13 +3103,6 @@ function drawChart(result) {
       <path d="${line(futureLow)}" fill="none" stroke="${getCss("--low")}" stroke-width="3"></path>
       ${history.map((p) => `<circle cx="${x(p.ds)}" cy="${y(p.value)}" r="3" fill="${actualColor}"></circle>`).join("")}
       <line x1="${x(result.records[result.records.length - 1].ds)}" y1="${margin.top}" x2="${x(result.records[result.records.length - 1].ds)}" y2="${height - margin.bottom}" stroke="${splitLineColor}" stroke-dasharray="4 6"></line>
-      <g transform="translate(${margin.left}, 18)" font-size="12" font-weight="700">
-        <circle cx="0" cy="0" r="4" fill="${actualColor}"></circle><text x="10" y="4" fill="${actualColor}">${escapeHtml(t("chart.actual"))}</text>
-        <circle cx="62" cy="0" r="4" fill="${fittedColor}"></circle><text x="72" y="4" fill="${actualColor}">${escapeHtml(t("chart.fitted"))}</text>
-        <circle cx="124" cy="0" r="4" fill="${getCss("--high")}"></circle><text x="134" y="4" fill="${actualColor}">${escapeHtml(t("chart.high"))}</text>
-        <circle cx="184" cy="0" r="4" fill="${getCss("--gold")}"></circle><text x="194" y="4" fill="${actualColor}">${escapeHtml(t("chart.recommended"))}</text>
-        <circle cx="250" cy="0" r="4" fill="${getCss("--low")}"></circle><text x="260" y="4" fill="${actualColor}">${escapeHtml(t("chart.low"))}</text>
-      </g>
       <g id="chartHover" style="display: none;">
         <line id="hoverLine" x1="0" y1="${margin.top}" x2="0" y2="${height - margin.bottom}" stroke="${actualColor}" stroke-dasharray="3 5"></line>
         <circle id="hoverActual" r="5" fill="${actualColor}" stroke="${pointStroke}" stroke-width="2"></circle>
@@ -3620,10 +3626,10 @@ function sidebarCollapsedPreference() {
 function applySidebarCollapsed(collapsed = sidebarCollapsedPreference()) {
   document.documentElement.dataset.sidebar = collapsed ? "collapsed" : "expanded";
   els.sidebarCollapseBtn.setAttribute("aria-expanded", String(!collapsed));
-  els.sidebarCollapseBtn.setAttribute("title", collapsed ? lt("展开侧栏", "Expand sidebar") : lt("折叠侧栏", "Collapse sidebar"));
-  els.sidebarCollapseBtn.setAttribute("aria-label", collapsed ? lt("展开侧栏", "Expand sidebar") : lt("折叠侧栏", "Collapse sidebar"));
+  els.sidebarCollapseBtn.setAttribute("title", collapsed ? t("static.expandSidebar") : t("static.collapseSidebar"));
+  els.sidebarCollapseBtn.setAttribute("aria-label", collapsed ? t("static.expandSidebar") : t("static.collapseSidebar"));
   els.sidebarCollapseIcon.textContent = collapsed ? "›" : "‹";
-  els.sidebarCollapseLabel.textContent = collapsed ? lt("展开侧栏", "Expand sidebar") : lt("折叠侧栏", "Collapse sidebar");
+  els.sidebarCollapseLabel.textContent = collapsed ? t("static.expandSidebar") : t("static.collapseSidebar");
 }
 
 function toggleSidebarCollapsed() {

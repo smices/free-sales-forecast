@@ -418,9 +418,43 @@ h1 {
 
 :root[data-sidebar="collapsed"] .brand > div,
 :root[data-sidebar="collapsed"] .sidebar-head .primary-btn,
-:root[data-sidebar="collapsed"] .control-tabs,
 :root[data-sidebar="collapsed"] .control-group {
   display: none;
+}
+
+:root[data-sidebar="collapsed"] .control-tabs {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+:root[data-sidebar="collapsed"] .tab-btn {
+  position: relative;
+  flex: 0 0 auto;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  font-size: 0;
+  box-shadow: none;
+}
+
+:root[data-sidebar="collapsed"] .tab-btn::before {
+  content: attr(data-icon);
+  font-size: 14px;
+  font-weight: 950;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+:root[data-sidebar="collapsed"] .tab-btn.active {
+  border-color: color-mix(in srgb, var(--teal) 58%, var(--accent-line));
 }
 
 :root[data-sidebar="collapsed"] .sidebar-footer {
@@ -1942,6 +1976,26 @@ tbody tr.active-row td {
 
   :root[data-sidebar="collapsed"] .control-tabs {
     display: flex;
+    flex-direction: row;
+    gap: 6px;
+    width: auto;
+    padding: 6px;
+    border: 1px solid var(--line);
+    background: #f6f8fc;
+  }
+
+  :root[data-sidebar="collapsed"] .tab-btn {
+    flex: 1 1 0;
+    width: auto;
+    height: 34px;
+    margin: 0;
+    border: 0;
+    border-radius: 6px;
+    font-size: 12px;
+  }
+
+  :root[data-sidebar="collapsed"] .tab-btn::before {
+    content: none;
   }
 
   :root[data-sidebar="collapsed"] .tab-panel {
