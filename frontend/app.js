@@ -3628,8 +3628,10 @@ function applySidebarCollapsed(collapsed = sidebarCollapsedPreference()) {
   els.sidebarCollapseBtn.setAttribute("aria-expanded", String(!collapsed));
   els.sidebarCollapseBtn.setAttribute("title", collapsed ? t("static.expandSidebar") : t("static.collapseSidebar"));
   els.sidebarCollapseBtn.setAttribute("aria-label", collapsed ? t("static.expandSidebar") : t("static.collapseSidebar"));
-  els.sidebarCollapseIcon.textContent = collapsed ? "›" : "‹";
-  els.sidebarCollapseLabel.textContent = collapsed ? t("static.expandSidebar") : t("static.collapseSidebar");
+  els.sidebarCollapseIcon.textContent = collapsed ? "»" : "«";
+  if (els.sidebarCollapseLabel) {
+    els.sidebarCollapseLabel.textContent = collapsed ? t("static.expandSidebar") : t("static.collapseSidebar");
+  }
 }
 
 function toggleSidebarCollapsed() {

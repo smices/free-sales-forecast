@@ -192,7 +192,7 @@ button {
   height: 100vh;
   height: 100dvh;
   min-height: 0;
-  padding: 18px 20px;
+  padding: 18px 20px 0;
   overflow: hidden;
   border-right: 1px solid rgba(216, 224, 230, 0.95);
   background: rgba(255, 255, 255, 0.94);
@@ -351,30 +351,80 @@ h1 {
 }
 
 .sidebar-footer {
-  flex: 0 0 auto;
+  position: static;
+  z-index: auto;
+  display: flex;
+  flex: 0 0 32px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  height: 32px;
+  min-height: 32px;
+  max-height: 32px;
   margin-top: auto;
-  padding-top: 12px;
-  border-top: 1px solid var(--line);
+  padding: 0;
+  border-top: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
+  transform: none;
+  pointer-events: auto;
 }
 
 .collapse-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  min-height: 44px;
+  width: 36px;
+  height: 24px;
+  min-height: 24px;
   margin: 0 auto;
   padding: 0;
-  border: 1px solid var(--line);
-  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
+  border-radius: 999px;
   color: var(--teal-dark);
-  background: color-mix(in srgb, var(--accent-soft) 82%, #fff);
+  background: color-mix(in srgb, var(--panel) 86%, transparent);
   font-size: 12px;
   font-weight: 900;
+  line-height: 1;
+  pointer-events: auto;
+}
+
+#sidebarCollapseBtn {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px !important;
+  min-width: 36px !important;
+  max-width: 36px !important;
+  height: 24px !important;
+  min-height: 24px !important;
+  max-height: 24px !important;
+  inline-size: 36px !important;
+  min-inline-size: 36px !important;
+  max-inline-size: 36px !important;
+  block-size: 24px !important;
+  min-block-size: 24px !important;
+  max-block-size: 24px !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  border: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
+  border-radius: 999px;
+  color: var(--teal-dark);
+  background: color-mix(in srgb, var(--panel) 86%, transparent);
+  cursor: pointer;
+  line-height: 1;
+  pointer-events: auto;
+}
+
+#sidebarCollapseBtn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
 }
 
 .collapse-btn:hover {
+  color: var(--accent);
   border-color: var(--accent-line);
   background: var(--accent-soft);
 }
@@ -384,21 +434,44 @@ h1 {
   align-items: center;
   justify-content: center;
   width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  color: #fff;
-  background: var(--teal);
-  font-size: 18px;
+  height: 18px;
+  color: currentColor;
+  background: transparent;
+  font-size: 16px;
+  font-family: inherit;
+  font-weight: 900;
   line-height: 1;
+  letter-spacing: 0;
+  transform: translateX(-0.25px);
+}
+
+#sidebarCollapseIcon {
+  width: 20px;
+  min-width: 20px;
+  max-width: 20px;
+  height: 18px;
+  min-height: 18px;
+  max-height: 18px;
+  inline-size: 20px;
+  min-inline-size: 20px;
+  max-inline-size: 20px;
+  block-size: 18px;
+  min-block-size: 18px;
+  max-block-size: 18px;
 }
 
 .collapse-label {
-  display: none;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
 :root[data-sidebar="collapsed"] .sidebar {
   width: 78px;
-  padding: 16px 12px;
+  padding: 16px 12px 0;
   align-items: center;
 }
 
@@ -459,20 +532,24 @@ h1 {
 
 :root[data-sidebar="collapsed"] .sidebar-footer {
   width: 100%;
-  padding-top: 0;
-  border-top: 0;
+  min-width: 0;
+  max-width: none;
+  height: 32px;
+  min-height: 32px;
+  max-height: 32px;
+  border-top: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
 }
 
 :root[data-sidebar="collapsed"] .collapse-btn {
-  width: 48px;
-  height: 48px;
-  min-height: 48px;
+  width: 36px;
+  height: 24px;
+  min-height: 24px;
 }
 
 :root[data-sidebar="collapsed"] .collapse-icon {
-  width: 24px;
-  height: 24px;
-  font-size: 20px;
+  width: 20px;
+  height: 18px;
+  font-size: 16px;
 }
 
 .model-param-panel {
@@ -2007,9 +2084,9 @@ tbody tr.active-row td {
   }
 
   :root[data-sidebar="collapsed"] .collapse-btn {
-    width: 44px;
-    height: 44px;
-    min-height: 44px;
+    width: 36px;
+    height: 24px;
+    min-height: 24px;
   }
 
   .app-shell {
