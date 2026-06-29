@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any
 
 
-DATE_HINTS = ("date", "ds", "day", "日期", "时间")
+DATE_HINTS = ("date", "period_start", "period", "ds", "day", "日期", "时间")
 METRIC_HINTS = (
     "sales",
     "revenue",
@@ -37,6 +37,24 @@ def read_csv_preview(path: Path, limit: int = 20) -> tuple[list[str], list[dict[
             if len(preview) < limit:
                 preview.append(dict(row))
     return columns, preview, row_count
+
+
+def write_json_rows_as_csv(rows: list[dict[str, Any]], path: Path) -> list[str]:
+    columns: list[str] = []
+    seen: set[str] = set()
+    for row in rows:
+        for column in row:
+            if column not in seen:
+                seen.add(column)
+                columns.append(column)
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=columns, extrasaction="ignore")
+        writer.writeheader()
+        for row in rows:
+            writer.writerow({column: row.get(column, "") for column in columns})
+    return columns
 
 
 def guess_columns(columns: list[str]) -> dict[str, Any]:

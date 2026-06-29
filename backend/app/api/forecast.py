@@ -10,13 +10,49 @@ from sqlalchemy.orm import Session
 
 from app.core.config import Settings, get_settings
 from app.db.session import get_db
-from app.schemas.forecast import Experiment, ForecastJob, ForecastJobCreate
+from app.schemas.forecast import (
+    Experiment,
+    ForecastJob,
+    ForecastJobCreate,
+    ForecastParameterSchema,
+    ForecastParameterTemplate,
+)
 from app.services.forecast import run_baseline_experiment
+from app.services.parameters import (
+    get_default_forecast_parameter_template,
+    get_forecast_parameter_schema,
+)
 from app.services.repository import PostgresRepository
 from app.services.tasks import enqueue_forecast_job
 from app.storage.minio_store import ObjectStorage
 
 router = APIRouter(prefix="/api", tags=["forecast"])
+
+
+@router.get(
+    "/forecast-parameters/schema",
+    response_model=ForecastParameterSchema,
+    summary="Get forecast model parameter schema",
+    description=(
+        "Returns a unified schema for dynamically rendering model parameter forms. "
+        "The returned defaults are compatible with ForecastJobCreate.params."
+    ),
+)
+def get_parameter_schema() -> dict:
+    return get_forecast_parameter_schema()
+
+
+@router.get(
+    "/forecast-parameters/template",
+    response_model=ForecastParameterTemplate,
+    summary="Export the default forecast parameter template",
+    description=(
+        "Returns a copyable default model and parameter template that downstream "
+        "platforms can store and later submit to POST /api/forecast-jobs."
+    ),
+)
+def export_parameter_template() -> dict:
+    return get_default_forecast_parameter_template()
 
 
 @router.post("/forecast-jobs", response_model=ForecastJob)

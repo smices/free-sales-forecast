@@ -38,6 +38,8 @@ XGBoost、NeuralProphet 和 N-BEATS。当前模型依赖已经包含在后端镜
 
 - React/Vite 前端，使用语言包支持 English / 简体中文。
 - FastAPI 后端，负责 CSV 上传、字段识别、数据诊断、任务创建、实验执行和 CSV 导出。
+- 平台 JSON dataset API：下游可以直接提交 JSON rows，后端转成与 CSV 上传一致的内部 CSV dataset。
+- 预测参数 schema 和默认模板导出 API：下游平台可以动态渲染模型参数表单，并复制/保存调配好的默认模板。
 - Dramatiq worker + Redis，负责异步预测任务。
 - PostgreSQL 元数据存储。
 - MinIO/S3 兼容模型产物存储。
@@ -48,6 +50,58 @@ XGBoost、NeuralProphet 和 N-BEATS。当前模型依赖已经包含在后端镜
 - 用户菜单支持主题和语言切换。
 - 指标、参数、图表 tooltip 解释。
 - 按模型下载未来预测 CSV 和历史拟合 CSV。
+
+## 平台集成 API
+
+### 用 JSON 创建 Dataset
+
+下游平台不再需要先在本地生成 CSV，可以直接调用：
+
+```http
+POST /api/datasets/json
+Content-Type: application/json
+```
+
+```json
+{
+  "filename": "platform_sales_actuals.json",
+  "rows": [
+    {
+      "period_start": "2026-06-01",
+      "quantity": 10.5,
+      "series_key": "SKU-001|AMZ|US",
+      "sku_code": "SKU-001",
+      "platform_code": "AMZ",
+      "site_code": "US"
+    }
+  ]
+}
+```
+
+`rows` 必须是非空数组。每行必须包含 `period_start` 和 `quantity`；其他维度字段会原样保留。后端会把 rows 写入 `storage/uploads` 下的 CSV 文件，再复用现有 CSV dataset 逻辑返回 `DatasetDetail`，包含 `row_count`、`columns`、`preview_rows` 和 `column_guess`。返回的 `dataset_id` 可以继续直接传给 `POST /api/forecast-jobs`。
+
+### 动态渲染预测参数表单
+
+```http
+GET /api/forecast-parameters/schema
+```
+
+返回 `default_models` 和每个模型的参数字段 schema，覆盖 `prophet`、`ets`、`sarima`、`featureMl`、`movingAverage`。字段默认值可以直接组装成 `ForecastJobCreate.params`：
+
+```json
+{
+  "ets": { "alpha": 0.3 },
+  "movingAverage": { "window": 4 }
+}
+```
+
+### 导出默认参数模板
+
+```http
+GET /api/forecast-parameters/template
+```
+
+返回可复制/保存的默认模板，包含 `primary_model`、`models` 和 `params`。下游平台可以把这个 payload 存成可复用的实验配置模板。
 
 ## 本地运行
 

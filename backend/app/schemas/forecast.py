@@ -24,6 +24,46 @@ class ForecastJobCreate(BaseModel):
     params: dict[str, Any] = Field(default_factory=dict)
 
 
+ParameterFieldType = Literal["number", "integer", "boolean", "select", "text"]
+
+
+class ForecastParameterOption(BaseModel):
+    label: str
+    value: str | int | float | bool
+
+
+class ForecastParameterField(BaseModel):
+    key: str
+    label: str
+    type: ParameterFieldType
+    default: Any
+    required: bool = False
+    help: str
+    min: float | int | None = None
+    max: float | int | None = None
+    step: float | int | None = None
+    options: list[ForecastParameterOption] | None = None
+
+
+class ForecastModelParameterSchema(BaseModel):
+    id: str
+    name: str
+    description: str | None = None
+    fields: list[ForecastParameterField] = Field(default_factory=list)
+
+
+class ForecastParameterSchema(BaseModel):
+    default_models: list[str]
+    models: list[ForecastModelParameterSchema]
+
+
+class ForecastParameterTemplate(BaseModel):
+    name: str
+    primary_model: str
+    models: list[str]
+    params: dict[str, Any] = Field(default_factory=dict)
+
+
 class ForecastJob(BaseModel):
     id: str
     dataset_id: str

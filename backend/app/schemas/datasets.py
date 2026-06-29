@@ -6,6 +6,30 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 
+class JsonDatasetCreate(BaseModel):
+    filename: str | None = Field(
+        default=None,
+        description="Original platform filename. Defaults to platform_dataset.json.",
+        examples=["platform_sales_actuals.json"],
+    )
+    rows: list[dict[str, Any]] = Field(
+        min_length=1,
+        description="Non-empty platform rows. Each row must include period_start and quantity.",
+        examples=[
+            [
+                {
+                    "period_start": "2026-06-01",
+                    "quantity": 10.5,
+                    "series_key": "SKU-001|AMZ|US",
+                    "sku_code": "SKU-001",
+                    "platform_code": "AMZ",
+                    "site_code": "US",
+                }
+            ]
+        ],
+    )
+
+
 class DatasetSummary(BaseModel):
     id: str
     filename: str

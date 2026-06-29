@@ -10,8 +10,13 @@ from sqlalchemy.orm import Session
 
 from app.core.config import Settings, get_settings
 from app.db.session import get_db
-from app.schemas.datasets import DatasetDetail, DatasetDiagnosis
-from app.services.datasets import diagnose_dataset, guess_columns, read_csv_preview
+from app.schemas.datasets import DatasetDetail, DatasetDiagnosis, JsonDatasetCreate
+from app.services.datasets import (
+    diagnose_dataset,
+    guess_columns,
+    read_csv_preview,
+    write_json_rows_as_csv,
+)
 from app.services.repository import PostgresRepository
 from app.storage.minio_store import ObjectStorage
 
@@ -61,6 +66,58 @@ async def upload_dataset(
         }
     )
     return dataset
+
+
+@router.post(
+    "/json",
+    response_model=DatasetDetail,
+    summary="Create a dataset from platform JSON rows",
+    description=(
+        "Accepts platform JSON rows, validates required period_start and quantity fields, "
+        "stores them as an internal CSV dataset, and returns the same DatasetDetail schema "
+        "used by CSV uploads."
+    ),
+)
+def create_json_dataset(
+    payload: JsonDatasetCreate,
+    settings: Settings = Depends(get_settings),
+    db: Session = Depends(get_db),
+) -> dict:
+    required_columns = ("period_start", "quantity")
+    for index, row in enumerate(payload.rows):
+        missing = [column for column in required_columns if column not in row]
+        if missing:
+            raise HTTPException(
+                status_code=422,
+                detail=f"rows[{index}] is missing required field(s): {', '.join(missing)}",
+            )
+
+    settings.upload_dir.mkdir(parents=True, exist_ok=True)
+    safe_name = Path(payload.filename or "platform_dataset.json").name
+    csv_name = f"{Path(safe_name).stem or 'platform_dataset'}.csv"
+    storage_path = settings.upload_dir / f"{uuid4()}_{csv_name}"
+    write_json_rows_as_csv(payload.rows, storage_path)
+
+    columns, preview_rows, row_count = read_csv_preview(storage_path)
+    column_guess = guess_columns(columns)
+    object_storage = ObjectStorage(settings)
+    storage_object = object_storage.put_file(
+        f"uploads/{storage_path.name}",
+        storage_path,
+        "text/csv",
+    )
+    repo = PostgresRepository(db)
+    return repo.create_dataset(
+        {
+            "filename": safe_name,
+            "storage_path": str(storage_path),
+            "storage_object": storage_object,
+            "row_count": row_count,
+            "columns": columns,
+            "column_guess": column_guess,
+            "preview_rows": preview_rows,
+        }
+    )
 
 
 @router.get("/{dataset_id}", response_model=DatasetDetail)

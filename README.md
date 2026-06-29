@@ -51,6 +51,10 @@ notebooks.
   Chinese.
 - FastAPI backend for CSV upload, data diagnosis, job creation, experiment
   execution, and CSV export APIs.
+- Platform JSON dataset API that converts JSON rows into the same internal CSV
+  dataset format used by CSV uploads.
+- Forecast parameter schema and template export APIs for downstream dynamic
+  model-parameter forms.
 - Dramatiq worker connected through Redis for asynchronous forecast jobs.
 - PostgreSQL metadata store.
 - MinIO/S3-compatible artifact storage.
@@ -61,6 +65,66 @@ notebooks.
 - User menu with theme and language switching.
 - Metric, parameter, and chart tooltips.
 - Per-model forecast and fitted-history CSV downloads.
+
+## Platform Integration APIs
+
+### Create a Dataset from JSON
+
+Downstream platforms can create a dataset without generating a CSV client-side:
+
+```http
+POST /api/datasets/json
+Content-Type: application/json
+```
+
+```json
+{
+  "filename": "platform_sales_actuals.json",
+  "rows": [
+    {
+      "period_start": "2026-06-01",
+      "quantity": 10.5,
+      "series_key": "SKU-001|AMZ|US",
+      "sku_code": "SKU-001",
+      "platform_code": "AMZ",
+      "site_code": "US"
+    }
+  ]
+}
+```
+
+`rows` must be a non-empty array. Each row must include `period_start` and
+`quantity`; other dimensions are preserved. The backend writes the rows into
+`storage/uploads` as CSV, then returns the existing `DatasetDetail` shape with
+`row_count`, `columns`, `preview_rows`, and `column_guess`. The returned
+`dataset_id` can be used unchanged with `POST /api/forecast-jobs`.
+
+### Render Forecast Parameter Forms
+
+```http
+GET /api/forecast-parameters/schema
+```
+
+Returns `default_models` and per-model field schemas for `prophet`, `ets`,
+`sarima`, `featureMl`, and `movingAverage`. Field defaults are compatible with
+`ForecastJobCreate.params`, for example:
+
+```json
+{
+  "ets": { "alpha": 0.3 },
+  "movingAverage": { "window": 4 }
+}
+```
+
+### Export a Default Parameter Template
+
+```http
+GET /api/forecast-parameters/template
+```
+
+Returns a copyable default template containing `primary_model`, `models`, and
+`params`. Downstream platforms can store this payload as a reusable experiment
+configuration template.
 
 ## Run Locally
 
